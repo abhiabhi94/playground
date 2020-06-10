@@ -1,10 +1,31 @@
 import React, { useState } from 'react';
 
-import calculateWinner from '../utils/CalculateWinner.js';
+import calculateWinner from '../../utils/CalculateWinner.js';
 import Board from './Board.js';
 
 
-export default function Game() {
+export default () => {
+    const handleClick = (i) => {
+        const currentHistory = history.slice(0, stepNumber + 1);
+        const current = currentHistory[currentHistory.length - 1];
+        const squares = current.squares.slice();
+        if (calculateWinner(squares) || squares[i]) {
+            return;
+        }
+        squares[i] = xIsNext ? 'X' : 'O';
+        setHistory(currentHistory.concat([
+            {
+                squares: squares,
+            }
+        ]));
+        setStepNumber(currentHistory.length);
+        setXIsNext(!xIsNext);
+    };
+
+    const jumpTo = step => {
+        setStepNumber(step);
+        setXIsNext((step % 2) === 0);
+    };
     const [history, setHistory] = useState([
         {
             squares: Array(9).fill(null),
@@ -46,26 +67,4 @@ export default function Game() {
             </div>
         </div>
     );
-
-    function handleClick(i) {
-        const currentHistory = history.slice(0, stepNumber + 1);
-        const current = currentHistory[currentHistory.length - 1];
-        const squares = current.squares.slice();
-        if (calculateWinner(squares) || squares[i]) {
-            return;
-        }
-        squares[i] = xIsNext ? 'X' : 'O';
-        setHistory(currentHistory.concat([
-            {
-                squares: squares,
-            }
-        ]));
-        setStepNumber(currentHistory.length);
-        setXIsNext(!xIsNext);
-    };
-
-    function jumpTo(step) {
-        setStepNumber(step);
-        setXIsNext((step % 2) === 0);
-    };
 };
